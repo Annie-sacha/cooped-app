@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/api/promoteur_service.dart';
 import '../../../core/models/client_model.dart';
+import 'client_detail_screen.dart';
 
 class PromoteurClientsScreen extends StatefulWidget {
   const PromoteurClientsScreen({super.key});
@@ -46,7 +47,10 @@ class _PromoteurClientsScreenState extends State<PromoteurClientsScreen> {
                       leading: CircleAvatar(child: Text(c.prenomCli[0])),
                       title: Text(c.nomComplet),
                       subtitle: Text(c.telephone ?? c.quartier ?? ''),
-                      onTap: () {}, // TODO : écran détail client
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => ClientDetailScreen(clientId: c.id)),
+                        ), // TODO : écran détail client
                     );
                   },
                 ),

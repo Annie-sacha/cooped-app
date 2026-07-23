@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/api/promoteur_service.dart';
 import '../../../core/models/client_model.dart';
+import '../clients/add_client_screen.dart';
 
 class PromoteurDashboardScreen extends StatefulWidget {
   const PromoteurDashboardScreen({super.key});
@@ -65,8 +66,18 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
-                    children: const [
-                      _ActionTile(icon: Icons.person_add, label: 'Ajouter un client'),
+                    children: [
+                      _ActionTile(
+                        icon: Icons.person_add,
+                        label: 'Ajouter un client',
+                        onTap: () async {
+                          final cree = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const AddClientScreen()),
+                          );
+                          if (cree == true) _charger();   // rafraîchit les stats après création
+                        },
+                      ),
                       _ActionTile(icon: Icons.savings, label: 'Créer une tontine'),
                       _ActionTile(icon: Icons.add_card, label: 'Enregistrer un versement'),
                       _ActionTile(icon: Icons.money_off, label: 'Faire un retrait'),
@@ -93,14 +104,25 @@ class _StatBox extends StatelessWidget {
       );
 }
 
+
+
+
 class _ActionTile extends StatelessWidget {
   final IconData icon;
   final String label;
-  const _ActionTile({required this.icon, required this.label});
+  final VoidCallback? onTap;
+
+  const _ActionTile({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.onTap,
+  });
+
   @override
   Widget build(BuildContext context) => Card(
         child: InkWell(
-          onTap: () {}, // TODO : branchement écran par écran
+          onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Column(
@@ -108,7 +130,11 @@ class _ActionTile extends StatelessWidget {
               children: [
                 Icon(icon, size: 28),
                 const SizedBox(height: 4),
-                Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11)),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 11),
+                ),
               ],
             ),
           ),
