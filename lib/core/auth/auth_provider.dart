@@ -18,12 +18,16 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isAuthenticated => _role != null;
+  int? _utilisateurId;
+  int? get utilisateurId => _utilisateurId;
 
   Future<void> tryAutoLogin() async {
     final token = await _storage.read(key: 'jwt_token');
     _role = await _storage.read(key: 'role');
     _nom = await _storage.read(key: 'nom');
     if (token != null) notifyListeners();
+    final idString = await _storage.read(key: 'utilisateurId');
+    _utilisateurId = idString != null ? int.parse(idString) : null;
   }
 
   Future<bool> login(String email, String motDePasse) async {
@@ -46,6 +50,7 @@ class AuthProvider extends ChangeNotifier {
 
       _role = loginResponse.role;
       _nom = loginResponse.nom;
+      _utilisateurId = loginResponse.utilisateurId;
       _isLoading = false;
       notifyListeners();
       return true;
