@@ -17,6 +17,8 @@ class CoopedApp extends StatelessWidget {
       child: Consumer<AuthProvider>(
         builder: (context, auth, _) => MaterialApp.router(
           title: 'COOPED',
+          debugShowCheckedModeBanner: false,
+
           theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
           routerConfig: buildRouter(auth),
         ),

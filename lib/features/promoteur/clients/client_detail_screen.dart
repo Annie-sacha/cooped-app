@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/api/client_service.dart';
 import '../../../core/models/client_model.dart';
+import '../tontines/client_tontines_screen.dart';
 
 class ClientDetailScreen extends StatefulWidget {
   final int clientId;
@@ -51,7 +52,10 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {}, // TODO : liste des tontines du client
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ClientTontinesScreen(client: c)),
+                  ),
                   icon: const Icon(Icons.savings_outlined),
                   label: const Text('Tontines'),
                 ),

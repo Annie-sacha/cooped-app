@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/api/promoteur_service.dart';
 import '../../../core/models/client_model.dart';
-import '../clients/add_client_screen.dart';
 
 class PromoteurDashboardScreen extends StatefulWidget {
   const PromoteurDashboardScreen({super.key});
@@ -67,17 +66,6 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
                     children: [
-                      _ActionTile(
-                        icon: Icons.person_add,
-                        label: 'Ajouter un client',
-                        onTap: () async {
-                          final cree = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const AddClientScreen()),
-                          );
-                          if (cree == true) _charger();   // rafraîchit les stats après création
-                        },
-                      ),
                       _ActionTile(icon: Icons.savings, label: 'Créer une tontine'),
                       _ActionTile(icon: Icons.add_card, label: 'Enregistrer un versement'),
                       _ActionTile(icon: Icons.money_off, label: 'Faire un retrait'),
