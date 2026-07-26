@@ -5,6 +5,7 @@ import '../../../core/api/promoteur_service.dart';
 import '../../../core/models/client_model.dart';
 import '../clients/select_client_screen.dart';
 import '../tontines/create_tontine_screen.dart';
+import '../operations/retrait_screen.dart';
 
 class PromoteurDashboardScreen extends StatefulWidget {
   const PromoteurDashboardScreen({super.key});
@@ -85,7 +86,25 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                         },
                       ),
                       const _ActionTile(icon: Icons.add_card, label: 'Enregistrer un versement'),
-                      const _ActionTile(icon: Icons.money_off, label: 'Faire un retrait'),
+                      _ActionTile(
+                        icon: Icons.money_off,
+                        label: 'Faire un retrait',
+                        onTap: () async {
+                          final clientId = await Navigator.push<int>(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SelectClientScreen()),
+                          );
+                          if (clientId != null && context.mounted) {
+                            final client = _clients?.firstWhere((c) => c.id == clientId);
+                            if (client != null) {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => RetraitScreen(client: client)),
+                              );
+                            }
+                          }
+                        },
+                      ),
                       const _ActionTile(icon: Icons.handshake, label: 'Accorder un prêt'),
                       const _ActionTile(icon: Icons.bar_chart, label: 'Rapports'),
                     ],
