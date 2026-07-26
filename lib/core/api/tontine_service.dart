@@ -42,4 +42,8 @@ class TontineService {
   }
 
 
+  Future<void> supprimer(int tontineId) async {
+  await _apiClient.dio.delete('/tontines/$tontineId');
+  } 
+
 }
