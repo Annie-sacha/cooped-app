@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/api/promoteur_service.dart';
 import '../../../core/models/client_model.dart';
+import '../clients/select_client_screen.dart';
+import '../tontines/create_tontine_screen.dart';
 
 class PromoteurDashboardScreen extends StatefulWidget {
   const PromoteurDashboardScreen({super.key});
@@ -66,11 +68,26 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
                     children: [
-                      _ActionTile(icon: Icons.savings, label: 'Créer une tontine'),
-                      _ActionTile(icon: Icons.add_card, label: 'Enregistrer un versement'),
-                      _ActionTile(icon: Icons.money_off, label: 'Faire un retrait'),
-                      _ActionTile(icon: Icons.handshake, label: 'Accorder un prêt'),
-                      _ActionTile(icon: Icons.bar_chart, label: 'Rapports'),
+                      _ActionTile(
+                        icon: Icons.savings,
+                        label: 'Créer une tontine',
+                        onTap: () async {
+                          final clientId = await Navigator.push<int>(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SelectClientScreen()),
+                          );
+                          if (clientId != null && context.mounted) {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => CreateTontineScreen(clientId: clientId)),
+                            );
+                          }
+                        },
+                      ),
+                      const _ActionTile(icon: Icons.add_card, label: 'Enregistrer un versement'),
+                      const _ActionTile(icon: Icons.money_off, label: 'Faire un retrait'),
+                      const _ActionTile(icon: Icons.handshake, label: 'Accorder un prêt'),
+                      const _ActionTile(icon: Icons.bar_chart, label: 'Rapports'),
                     ],
                   ),
                 ],
