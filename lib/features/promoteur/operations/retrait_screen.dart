@@ -26,7 +26,13 @@ class _RetraitScreenState extends State<RetraitScreen> {
         montantTotal: double.parse(_montant.text.trim()),
         motif: _motif.text.trim().isEmpty ? null : _motif.text.trim(),
       );
-      if (mounted) Navigator.pop(context, true);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Retrait effectué avec succès'), backgroundColor: Colors.green),
+        );
+        await Future.delayed(const Duration(milliseconds: 800));
+        if (mounted) Navigator.pop(context, true);
+        }
     } catch (e) {
       if (mounted) {
         final message = e is DioException && e.response?.data is Map
