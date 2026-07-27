@@ -76,7 +76,7 @@ class _ClientTontinesScreenState extends State<ClientTontinesScreen> {
                   return ListTile(
                     leading: const Icon(Icons.savings_outlined),
                     title: Text('${t.mise.toStringAsFixed(0)} FCFA / cotisation'),
-                    subtitle: Text('${t.nbreMise} cases — ${t.estActive ? "En cours" : "Clôturée"}'),
+                    subtitle: Text('${t.nbreMise} cases — ${t.estActive ? "En cours" : "Clôturée"}\n${t.periode}'),
                     trailing: t.estActive
                         ? const Icon(Icons.circle, color: Colors.green, size: 12)
                         : const Icon(Icons.circle, color: Colors.grey, size: 12),

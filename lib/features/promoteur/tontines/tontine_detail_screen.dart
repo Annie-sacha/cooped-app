@@ -141,6 +141,7 @@ class _TontineDetailScreenState extends State<TontineDetailScreen> {
         child: Column(
           children: [
             Text(c.cloturee ? 'Clôturée' : 'En cours', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('${widget.tontine.dateCreation} → ${widget.tontine.dateFin ?? "en cours"}'),
             const SizedBox(height: 16),
             GridView.builder(
               shrinkWrap: true,
