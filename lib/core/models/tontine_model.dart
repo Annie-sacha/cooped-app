@@ -13,6 +13,12 @@ class TontineModel {
     this.dateFin,
   });
 
+  String get periode {
+    final debut = dateCreation;
+    final fin = dateFin ?? '?';
+    return '$debut → $fin';
+  }
+
   factory TontineModel.fromJson(Map<String, dynamic> json) => TontineModel(
         numero: json['numero'],
         mise: (json['mise'] as num).toDouble(),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../core/api/client_service.dart';
 import '../../../core/models/client_model.dart';
 import '../tontines/client_tontines_screen.dart';
+import '../operations/pret_screen.dart';
+import '../operations/retrait_screen.dart';
 
 class ClientDetailScreen extends StatefulWidget {
   final int clientId;
@@ -66,6 +68,33 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                   onPressed: () {}, // TODO : suivi du client
                   icon: const Icon(Icons.history),
                   label: const Text('Suivi'),
+                ),
+              ),
+            ],
+          ),
+
+
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => RetraitScreen(client: c)),
+                  ),
+                  icon: const Icon(Icons.money_off),
+                  label: const Text('Retrait'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => PretScreen(client: c)),
+                  ),
+                  icon: const Icon(Icons.handshake),
+                  label: const Text('Prêt'),
                 ),
               ),
             ],
