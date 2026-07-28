@@ -7,6 +7,7 @@ import '../clients/select_client_screen.dart';
 import '../tontines/create_tontine_screen.dart';
 import '../operations/retrait_screen.dart';
 import '../operations/pret_screen.dart';
+import '../operations/achat_screen.dart';
 
 
 
@@ -88,7 +89,27 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                           }
                         },
                       ),
-                      const _ActionTile(icon: Icons.add_card, label: 'Enregistrer un versement'),
+
+                      _ActionTile(
+                        icon: Icons.shopping_bag_outlined,
+                        label: 'Effectuer un achat',
+                        onTap: () async {
+                          final clientId = await Navigator.push<int>(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SelectClientScreen()),
+                          );
+                          if (clientId != null && context.mounted) {
+                            final client = _clients?.firstWhere((c) => c.id == clientId);
+                            if (client != null) {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => AchatScreen(client: client)),
+                              );
+                            }
+                          }
+                        },
+                      ),
+
                       _ActionTile(
                         icon: Icons.money_off,
                         label: 'Faire un retrait',

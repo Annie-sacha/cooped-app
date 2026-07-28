@@ -5,6 +5,7 @@ class TontineModel {
   final String dateCreation;
   final String? dateFin;
   final String? dateFinPrevue;
+  final String type;   // "Normale", "Pret", "Achat"
 
 
   TontineModel({
@@ -14,13 +15,10 @@ class TontineModel {
     required this.dateCreation,
     this.dateFin,
     this.dateFinPrevue,
+    required this.type,
   });
 
-  /*String get periode {
-    final debut = dateCreation;
-    final fin = dateFin ?? '?';
-    return '$debut → $fin';
-  }*/
+  
 
   String get periode => '$dateCreation → ${dateFin ?? dateFinPrevue ?? "?"}';
 
@@ -31,6 +29,7 @@ class TontineModel {
         dateCreation: json['dateCreation'],
         dateFin: json['dateFin'],
         dateFinPrevue: json['dateFinPrevue'],
+        type: json['type'],
 
       );
 
