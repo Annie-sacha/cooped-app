@@ -4,11 +4,22 @@ import '../models/achat_model.dart';
 class AchatService {
   final ApiClient _apiClient = ApiClient();
 
-  Future<void> creer({required int clientId, required double montant, required String article}) async {
+
+  Future<void> creer({
+    required int clientId,
+    required double montant,
+    required String article,
+    bool ouvrirTontine = false,
+    double? miseTontine,
+    int? nbreMiseTontine,
+  }) async {
     await _apiClient.dio.post('/achats', data: {
       'clientId': clientId,
       'montant': montant,
       'article': article,
+      'ouvrirTontine': ouvrirTontine,
+      'miseTontine': miseTontine,
+      'nbreMiseTontine': nbreMiseTontine,
     });
   }
 

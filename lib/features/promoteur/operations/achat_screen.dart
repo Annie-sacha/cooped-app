@@ -14,7 +14,10 @@ class _AchatScreenState extends State<AchatScreen> {
   final _formKey = GlobalKey<FormState>();
   final _montant = TextEditingController();
   final _article = TextEditingController();
+  final _miseTontine = TextEditingController();
+  final _dureeTontine = TextEditingController(text: '31');
   final _service = AchatService();
+  bool _ouvrirTontine = false;
   bool _loading = false;
 
   Future<void> _enregistrer() async {
@@ -25,6 +28,9 @@ class _AchatScreenState extends State<AchatScreen> {
         clientId: widget.client.id,
         montant: double.parse(_montant.text.trim()),
         article: _article.text.trim(),
+        ouvrirTontine: _ouvrirTontine,
+        miseTontine: _ouvrirTontine ? double.tryParse(_miseTontine.text.trim()) : null,
+        nbreMiseTontine: _ouvrirTontine ? int.tryParse(_dureeTontine.text.trim()) : null,
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,6 +77,33 @@ class _AchatScreenState extends State<AchatScreen> {
                   return null;
                 },
               ),
+              const SizedBox(height: 12),
+              SwitchListTile(
+                title: const Text('Ouvrir une tontine pour cet achat'),
+                subtitle: const Text('Le client remboursera via des cotisations'),
+                value: _ouvrirTontine,
+                onChanged: (v) => setState(() => _ouvrirTontine = v),
+              ),
+              if (_ouvrirTontine) ...[
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _miseTontine,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Mise de la tontine (FCFA)', border: OutlineInputBorder()),
+                  validator: (v) {
+                    if (!_ouvrirTontine) return null;
+                    if (v == null || v.trim().isEmpty) return 'Requis';
+                    if (double.tryParse(v.trim()) == null) return 'Montant invalide';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _dureeTontine,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Durée (jours, 31 par défaut)', border: OutlineInputBorder()),
+                ),
+              ],
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
