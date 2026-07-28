@@ -4,6 +4,7 @@ import '../../../core/models/client_model.dart';
 import '../tontines/client_tontines_screen.dart';
 import '../operations/pret_screen.dart';
 import '../operations/retrait_screen.dart';
+import '../operations/achat_screen.dart';
 
 class ClientDetailScreen extends StatefulWidget {
   final int clientId;
@@ -99,6 +100,24 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
               ),
             ],
           ),
+
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.push(
+                    context,
+                      MaterialPageRoute(builder: (_) => AchatScreen(client: c)),
+
+                  ),
+                  icon: const Icon(Icons.shopping_bag_outlined),
+                  label: const Text('Achat'),
+                 
+                ),
+              ),
+            ],
+          ),
+
         ],
       ),
     );
