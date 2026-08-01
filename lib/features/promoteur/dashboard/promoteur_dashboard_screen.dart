@@ -8,6 +8,8 @@ import '../tontines/create_tontine_screen.dart';
 import '../operations/retrait_screen.dart';
 import '../operations/pret_screen.dart';
 import '../operations/achat_screen.dart';
+import '../../../core/theme/app_theme.dart';
+import '../tontines/client_tontines_screen.dart';
 
 
 
@@ -51,7 +53,7 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   Card(
-                    color: Theme.of(context).colorScheme.primaryContainer,
+                    color: AppTheme.primary,
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Row(
@@ -76,6 +78,7 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                       _ActionTile(
                         icon: Icons.savings,
                         label: 'Créer une tontine',
+                        color: AppTheme.secondary,
                         onTap: () async {
                           final clientId = await Navigator.push<int>(
                             context,
@@ -93,6 +96,7 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                       _ActionTile(
                         icon: Icons.shopping_bag_outlined,
                         label: 'Effectuer un achat',
+                        color: AppTheme.warning,
                         onTap: () async {
                           final clientId = await Navigator.push<int>(
                             context,
@@ -113,6 +117,7 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                       _ActionTile(
                         icon: Icons.money_off,
                         label: 'Faire un retrait',
+                        color: AppTheme.danger,
                         onTap: () async {
                           final clientId = await Navigator.push<int>(
                             context,
@@ -132,6 +137,7 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                       _ActionTile(
                         icon: Icons.handshake,
                         label: 'Accorder un prêt',
+                        color: AppTheme.primaryDark,
                         onTap: () async {
                           final clientId = await Navigator.push<int>(
                             context,
@@ -143,6 +149,26 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (_) => PretScreen(client: client)),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                      _ActionTile(
+                        icon: Icons.add_card,
+                        label: 'Ajouter une cotisation',
+                        color: AppTheme.secondary,
+                        onTap: () async {
+                          final clientId = await Navigator.push<int>(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SelectClientScreen()),
+                          );
+                          if (clientId != null && context.mounted) {
+                            final client = _clients?.firstWhere((c) => c.id == clientId);
+                            if (client != null) {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => ClientTontinesScreen(client: client)),
                               );
                             }
                           }
@@ -164,8 +190,8 @@ class _StatBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
         children: [
-          Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          Text(label),
+          Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+          Text(label, style: const TextStyle(color: Colors.white70)),
         ],
       );
 }
@@ -176,12 +202,13 @@ class _StatBox extends StatelessWidget {
 class _ActionTile extends StatelessWidget {
   final IconData icon;
   final String label;
+  final Color color;
   final VoidCallback? onTap;
 
   const _ActionTile({
-    super.key,
     required this.icon,
     required this.label,
+    this.color = AppTheme.primary,
     this.onTap,
   });
 
@@ -189,18 +216,19 @@ class _ActionTile extends StatelessWidget {
   Widget build(BuildContext context) => Card(
         child: InkWell(
           onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 28),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 11),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: color.withOpacity(0.12), shape: BoxShape.circle),
+                  child: Icon(icon, size: 22, color: color),
                 ),
+                const SizedBox(height: 6),
+                Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11)),
               ],
             ),
           ),

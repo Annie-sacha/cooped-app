@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/auth/auth_provider.dart';
 import 'core/router/app_router.dart';
+import 'core/theme/app_theme.dart';
+
 
 void main() {
   runApp(const CoopedApp());
@@ -18,9 +20,8 @@ class CoopedApp extends StatelessWidget {
         builder: (context, auth, _) => MaterialApp.router(
           title: 'COOPED',
           debugShowCheckedModeBanner: false,
-
-          theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-          routerConfig: buildRouter(auth),
+            theme: AppTheme.theme,
+            routerConfig: buildRouter(auth),
         ),
       ),
     );

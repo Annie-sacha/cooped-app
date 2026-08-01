@@ -5,6 +5,9 @@ import '../tontines/client_tontines_screen.dart';
 import '../operations/pret_screen.dart';
 import '../operations/retrait_screen.dart';
 import '../operations/achat_screen.dart';
+import '../suivi/client_suivi_screen.dart';
+
+
 
 class ClientDetailScreen extends StatefulWidget {
   final int clientId;
@@ -66,7 +69,10 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {}, // TODO : suivi du client
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ClientSuiviScreen(client: c)),
+                  ),
                   icon: const Icon(Icons.history),
                   label: const Text('Suivi'),
                 ),
