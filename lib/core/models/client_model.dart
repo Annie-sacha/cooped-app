@@ -21,5 +21,11 @@ class ClientModel {
         quartier: json['quartier'],
       );
 
-  String get nomComplet => '$prenomCli $nomCli';
+  String get nomComplet => '$prenomCli $nomCli'.trim();
+
+  String get initiale {
+    if (prenomCli.isNotEmpty) return prenomCli[0];
+    if (nomCli.isNotEmpty) return nomCli[0];
+    return '?';
+  }
 }

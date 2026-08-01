@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dashboard/promoteur_dashboard_screen.dart';
 import 'clients/promoteur_clients_screen.dart';
 import 'profil/promoteur_profil_screen.dart';
+import 'tontines/tontines_tab_screen.dart';
+import 'operations/operations_tab_screen.dart';
 
 class PromoteurShell extends StatefulWidget {
   const PromoteurShell({super.key});
@@ -12,11 +14,11 @@ class PromoteurShell extends StatefulWidget {
 class _PromoteurShellState extends State<PromoteurShell> {
   int _index = 0;
 
- final _screens = const [
+  final _screens = const [
     PromoteurDashboardScreen(),
     PromoteurClientsScreen(),
-    Center(child: Text('Tontines (à venir)')),
-    Center(child: Text('Opérations (à venir)')),
+    TontinesTabScreen(),
+    OperationsTabScreen(),
     PromoteurProfilScreen(),
   ];
 

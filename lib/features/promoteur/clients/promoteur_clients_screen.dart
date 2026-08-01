@@ -44,7 +44,7 @@ class _PromoteurClientsScreenState extends State<PromoteurClientsScreen> {
                   itemBuilder: (context, i) {
                     final c = _clients[i];
                     return ListTile(
-                      leading: CircleAvatar(child: Text(c.prenomCli[0])),
+                      leading: CircleAvatar(child: Text(c.initiale)),
                       title: Text(c.nomComplet),
                       subtitle: Text(c.telephone ?? c.quartier ?? ''),
                       onTap: () => Navigator.push(

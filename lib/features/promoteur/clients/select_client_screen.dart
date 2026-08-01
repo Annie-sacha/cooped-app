@@ -41,9 +41,9 @@ class _SelectClientScreenState extends State<SelectClientScreen> {
               itemBuilder: (context, i) {
                 final c = _clients[i];
                 return ListTile(
-                  leading: CircleAvatar(child: Text(c.prenomCli[0])),
+                  leading: CircleAvatar(child: Text(c.initiale)),
                   title: Text(c.nomComplet),
-                  onTap: () => Navigator.pop(context, c.id),
+                  onTap: () => Navigator.pop(context, c),
                 );
               },
             ),

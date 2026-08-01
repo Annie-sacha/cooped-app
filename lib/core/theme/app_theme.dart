@@ -8,6 +8,13 @@ class AppTheme {
   static const danger = Color(0xFFD64550);
   static const background = Color(0xFFFFF8F2); 
 
+  /*static const primary = Color(0xFF3E8E5A);       // vert sauge apaisant
+  static const primaryDark = Color(0xFF2C6B42);
+  static const secondary = Color(0xFF8FBF9F);      // vert tendre
+  static const warning = Color(0xFFE0A458);
+  static const danger = Color(0xFFC85C5C);
+  static const background = Color(0xFFF6FAF7);  */
+
   static ThemeData get theme => ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: background,

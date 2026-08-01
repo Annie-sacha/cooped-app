@@ -3,15 +3,13 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/api/promoteur_service.dart';
 import '../../../core/models/client_model.dart';
+import '../../../core/theme/app_theme.dart';
 import '../clients/select_client_screen.dart';
 import '../tontines/create_tontine_screen.dart';
+import '../tontines/client_tontines_screen.dart';
 import '../operations/retrait_screen.dart';
 import '../operations/pret_screen.dart';
 import '../operations/achat_screen.dart';
-import '../../../core/theme/app_theme.dart';
-import '../tontines/client_tontines_screen.dart';
-
-
 
 class PromoteurDashboardScreen extends StatefulWidget {
   const PromoteurDashboardScreen({super.key});
@@ -39,6 +37,13 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
     });
   }
 
+  Future<ClientModel?> _choisirClient() {
+    return Navigator.push<ClientModel>(
+      context,
+      MaterialPageRoute(builder: (_) => const SelectClientScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
@@ -60,7 +65,7 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _StatBox(label: 'Clients', value: '${_clients?.length ?? 0}'),
-                          _StatBox(label: 'Tontines actives', value: '—'),
+                          const _StatBox(label: 'Tontines actives', value: '—'),
                         ],
                       ),
                     ),
@@ -80,77 +85,12 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                         label: 'Créer une tontine',
                         color: AppTheme.secondary,
                         onTap: () async {
-                          final clientId = await Navigator.push<int>(
-                            context,
-                            MaterialPageRoute(builder: (_) => const SelectClientScreen()),
-                          );
-                          if (clientId != null && context.mounted) {
+                          final client = await _choisirClient();
+                          if (client != null && mounted) {
                             await Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => CreateTontineScreen(clientId: clientId)),
+                              MaterialPageRoute(builder: (_) => CreateTontineScreen(clientId: client.id)),
                             );
-                          }
-                        },
-                      ),
-
-                      _ActionTile(
-                        icon: Icons.shopping_bag_outlined,
-                        label: 'Effectuer un achat',
-                        color: AppTheme.warning,
-                        onTap: () async {
-                          final clientId = await Navigator.push<int>(
-                            context,
-                            MaterialPageRoute(builder: (_) => const SelectClientScreen()),
-                          );
-                          if (clientId != null && context.mounted) {
-                            final client = _clients?.firstWhere((c) => c.id == clientId);
-                            if (client != null) {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => AchatScreen(client: client)),
-                              );
-                            }
-                          }
-                        },
-                      ),
-
-                      _ActionTile(
-                        icon: Icons.money_off,
-                        label: 'Faire un retrait',
-                        color: AppTheme.danger,
-                        onTap: () async {
-                          final clientId = await Navigator.push<int>(
-                            context,
-                            MaterialPageRoute(builder: (_) => const SelectClientScreen()),
-                          );
-                          if (clientId != null && context.mounted) {
-                            final client = _clients?.firstWhere((c) => c.id == clientId);
-                            if (client != null) {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => RetraitScreen(client: client)),
-                              );
-                            }
-                          }
-                        },
-                      ),
-                      _ActionTile(
-                        icon: Icons.handshake,
-                        label: 'Accorder un prêt',
-                        color: AppTheme.primaryDark,
-                        onTap: () async {
-                          final clientId = await Navigator.push<int>(
-                            context,
-                            MaterialPageRoute(builder: (_) => const SelectClientScreen()),
-                          );
-                          if (clientId != null && context.mounted) {
-                            final client = _clients?.firstWhere((c) => c.id == clientId);
-                            if (client != null) {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => PretScreen(client: client)),
-                              );
-                            }
                           }
                         },
                       ),
@@ -159,18 +99,54 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                         label: 'Ajouter une cotisation',
                         color: AppTheme.secondary,
                         onTap: () async {
-                          final clientId = await Navigator.push<int>(
-                            context,
-                            MaterialPageRoute(builder: (_) => const SelectClientScreen()),
-                          );
-                          if (clientId != null && context.mounted) {
-                            final client = _clients?.firstWhere((c) => c.id == clientId);
-                            if (client != null) {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => ClientTontinesScreen(client: client)),
-                              );
-                            }
+                          final client = await _choisirClient();
+                          if (client != null && mounted) {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => ClientTontinesScreen(client: client)),
+                            );
+                          }
+                        },
+                      ),
+                      _ActionTile(
+                        icon: Icons.shopping_bag_outlined,
+                        label: 'Effectuer un achat',
+                        color: AppTheme.warning,
+                        onTap: () async {
+                          final client = await _choisirClient();
+                          if (client != null && mounted) {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => AchatScreen(client: client)),
+                            );
+                          }
+                        },
+                      ),
+                      _ActionTile(
+                        icon: Icons.money_off,
+                        label: 'Faire un retrait',
+                        color: AppTheme.danger,
+                        onTap: () async {
+                          final client = await _choisirClient();
+                          if (client != null && mounted) {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => RetraitScreen(client: client)),
+                            );
+                          }
+                        },
+                      ),
+                      _ActionTile(
+                        icon: Icons.handshake,
+                        label: 'Accorder un prêt',
+                        color: AppTheme.primaryDark,
+                        onTap: () async {
+                          final client = await _choisirClient();
+                          if (client != null && mounted) {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => PretScreen(client: client)),
+                            );
                           }
                         },
                       ),
@@ -195,9 +171,6 @@ class _StatBox extends StatelessWidget {
         ],
       );
 }
-
-
-
 
 class _ActionTile extends StatelessWidget {
   final IconData icon;

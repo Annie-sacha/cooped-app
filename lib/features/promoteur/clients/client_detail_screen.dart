@@ -44,7 +44,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           Center(
-            child: CircleAvatar(radius: 40, child: Text(c.prenomCli[0], style: const TextStyle(fontSize: 28))),
+            child: CircleAvatar(radius: 40, child: Text(c.initiale, style: const TextStyle(fontSize: 28)),),
           ),
           const SizedBox(height: 12),
           Center(child: Text(c.nomComplet, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
