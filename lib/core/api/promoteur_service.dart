@@ -14,4 +14,9 @@ class PromoteurService {
     final response = await _apiClient.dio.get('/promoteurs/$id');
     return PromoteurModel.fromJson(response.data);
   }
+
+  Future<List<PromoteurModel>> getAll() async {
+    final response = await _apiClient.dio.get('/promoteurs');
+    return (response.data as List).map((e) => PromoteurModel.fromJson(e)).toList();
+  }
 }
