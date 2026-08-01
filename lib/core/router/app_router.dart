@@ -3,6 +3,7 @@ import '../auth/auth_provider.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/admin/dashboard/admin_dashboard_screen.dart';
 import '../../features/promoteur/promoteur_shell.dart';
+import '../../features/admin/admin_shell.dart';
 
 
 
@@ -21,7 +22,7 @@ GoRouter buildRouter(AuthProvider auth) {
     },
     routes: [
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-      GoRoute(path: '/admin', builder: (context, state) => const AdminDashboardScreen()),
+      GoRoute(path: '/admin', builder: (context, state) => const AdminShell()),
       GoRoute(path: '/promoteur', builder: (context, state) => const PromoteurShell()),
 
     ],
