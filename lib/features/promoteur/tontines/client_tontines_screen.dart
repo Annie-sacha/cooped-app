@@ -177,7 +177,7 @@ class _ClientTontinesScreenState extends State<ClientTontinesScreen> {
           if (cree == true) _charger();
         },
         icon: const Icon(Icons.add),
-        label: const Text('Nouvelle tontine'),
+        label: const Text('Nouvelle cotisation'),
       ),
     );
   }

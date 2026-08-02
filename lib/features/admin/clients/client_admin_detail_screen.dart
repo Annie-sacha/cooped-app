@@ -135,11 +135,11 @@ class _ClientAdminDetailScreenState extends State<ClientAdminDetailScreen> {
               children: [
                 OutlinedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => CreateTontineScreen(clientId: widget.client.id))),
-                icon: const Icon(Icons.savings), label: const Text('Nouvelle tontine'),
+                icon: const Icon(Icons.savings), label: const Text('Nouvelle Cotisation'),
                 ),
                 OutlinedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ClientTontinesScreen(client: widget.client))),
-                icon: const Icon(Icons.add_card), label: const Text('Cotisation'),
+                icon: const Icon(Icons.add_card), label: const Text('Cotisations'),
                 ),
                 OutlinedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RetraitScreen(client: widget.client))),

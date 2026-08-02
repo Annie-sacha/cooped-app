@@ -37,7 +37,7 @@ class _CreateTontineScreenState extends State<CreateTontineScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Créer une tontine')),
+      appBar: AppBar(title: const Text('Ajouter une cotisation')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -65,7 +65,7 @@ class _CreateTontineScreenState extends State<CreateTontineScreen> {
                   onPressed: _loading ? null : _creer,
                   child: _loading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Créer la tontine'),
+                      : const Text('Créer'),
                 ),
               ),
             ],
