@@ -30,23 +30,7 @@ class _ClientAdminDetailScreenState extends State<ClientAdminDetailScreen> {
     _depot = TextEditingController(text: c.montantDepotRequis?.toStringAsFixed(0) ?? '');
   }
 
-  Future<void> _enregistrerInfos() async {
-    setState(() => _loading = true);
-    try {
-      await _service.update(
-        id: widget.client.id,
-        nomCli: _nom.text.trim(),
-        prenomCli: _prenom.text.trim(),
-        telephone: _telephone.text.trim().isEmpty ? null : _telephone.text.trim(),
-        quartier: _quartier.text.trim().isEmpty ? null : _quartier.text.trim(),
-      );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Client modifié')));
-      }
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
+  
 
   Future<void> _enregistrerDepot() async {
     final montant = _depot.text.trim().isEmpty ? null : double.tryParse(_depot.text.trim());
@@ -82,6 +66,25 @@ class _ClientAdminDetailScreenState extends State<ClientAdminDetailScreen> {
           );
         }
       }
+    }
+  }
+
+  Future<void> _enregistrerInfos() async {
+    setState(() => _loading = true);
+    try {
+        await _service.update(
+        id: widget.client.id,
+        nomCli: _nom.text.trim(),
+        prenomCli: _prenom.text.trim(),
+        telephone: _telephone.text.trim().isEmpty ? null : _telephone.text.trim(),
+        quartier: _quartier.text.trim().isEmpty ? null : _quartier.text.trim(),
+        );
+        if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Client modifié')));
+        Navigator.pop(context, true);   
+        }
+    } finally {
+        if (mounted) setState(() => _loading = false);
     }
   }
 

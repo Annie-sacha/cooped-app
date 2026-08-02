@@ -53,4 +53,5 @@ class ClientService {
   Future<void> definirDepotRequis(int id, double? montant) async {
     await _apiClient.dio.put('/clients/$id/depot-requis', data: {'montant': montant});
   }
+  
 }

@@ -19,4 +19,35 @@ class PromoteurService {
     final response = await _apiClient.dio.get('/promoteurs');
     return (response.data as List).map((e) => PromoteurModel.fromJson(e)).toList();
   }
+
+  Future<void> create({
+    required String nom,
+    required String telephone,
+    required String email,
+    required String motDePasse,
+  }) async {
+    await _apiClient.dio.post('/promoteurs', data: {
+      'nom': nom,
+      'telephone': telephone,
+      'email': email,
+      'motDePasse': motDePasse,
+    });
+  }
+
+  Future<void> update({
+    required int id,
+    required String nom,
+    required String telephone,
+    required String email,
+  }) async {
+    await _apiClient.dio.put('/promoteurs/$id', data: {
+      'nom': nom,
+      'telephone': telephone,
+      'email': email,
+    });
+  }
+
+  Future<void> delete(int id) async {
+    await _apiClient.dio.delete('/promoteurs/$id');
+  }
 }
