@@ -89,7 +89,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('Bienvenue,', style: TextStyle(color: Colors.white70)),
-                                Text('Monsieur AMADOTEY-AGBETO'
+                                Text('Monsieur AMADOTEY-AGBETO',
                                   //auth.nom ?? '',
                                   style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
@@ -100,56 +100,62 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       ),
                     ),
                     const SizedBox(height: 28),
-                    const Text('Vue d\'ensemble', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: [
-                        _StatCard(label: 'Clients', value: '$_totalClients', icon: Icons.people, color: AppTheme.primary),
-                        _StatCard(label: 'Promoteurs', value: '$_totalPromoteurs', icon: Icons.badge, color: AppTheme.secondary),
-                        _StatCard(label: 'Retraits en attente', value: '$_retraitsEnAttente', icon: Icons.money_off, color: AppTheme.danger),
-                        _StatCard(label: 'Prêts en attente', value: '$_pretsEnAttente', icon: Icons.handshake, color: AppTheme.warning),
-                      ],
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        int colonnes = constraints.maxWidth > 900 ? 4 : (constraints.maxWidth > 500 ? 2 : 1);
+                        return GridView.count(
+                          crossAxisCount: colonnes,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 1.6,
+                          children: [
+                            _StatCard(label: 'Clients', value: '$_totalClients', icon: Icons.people, color: AppTheme.primary),
+                            _StatCard(label: 'Promoteurs', value: '$_totalPromoteurs', icon: Icons.badge, color: AppTheme.secondary),
+                            _StatCard(label: 'Retraits en attente', value: '$_retraitsEnAttente', icon: Icons.money_off, color: AppTheme.danger),
+                            _StatCard(label: 'Prêts en attente', value: '$_pretsEnAttente', icon: Icons.handshake, color: AppTheme.warning),
+                          ],
+                        );
+                      },
                     ),
                     const SizedBox(height: 28),
-                    const Text('Actions rapides', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: [
-                        _ActionCard(
-                          icon: Icons.person_add,
-                          label: 'Ajouter un client',
-                          color: AppTheme.primary,
-                          onTap: () async {
-                            final cree = await Navigator.push(context, MaterialPageRoute(builder: (_) => const AddClientAdminScreen()));
-                            if (cree == true) _charger();
-                          },
-                        ),
-                        _ActionCard(
-                          icon: Icons.badge_outlined,
-                          label: 'Ajouter un promoteur',
-                          color: AppTheme.secondary,
-                          onTap: () async {
-                            final cree = await Navigator.push(context, MaterialPageRoute(builder: (_) => const AddPromoteurScreen()));
-                            if (cree == true) _charger();
-                          },
-                        ),
-                        _ActionCard(
-                          icon: Icons.fact_check_outlined,
-                          label: 'Voir les validations',
-                          color: AppTheme.warning,
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ValidationsScreen())),
-                        ),
-                        _ActionCard(
-                          icon: Icons.bar_chart,
-                          label: 'Statistiques',
-                          color: AppTheme.primaryDark,
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StatistiquesScreen())),
-                        ),
-                      ],
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        int colonnes = constraints.maxWidth > 900 ? 4 : (constraints.maxWidth > 500 ? 2 : 1);
+                        return GridView.count(
+                          crossAxisCount: colonnes,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 1.6,
+                          children: [
+                            _ActionCard(
+                              icon: Icons.person_add, label: 'Ajouter un client', color: AppTheme.primary,
+                              onTap: () async {
+                                final cree = await Navigator.push(context, MaterialPageRoute(builder: (_) => const AddClientAdminScreen()));
+                                if (cree == true) _charger();
+                              },
+                            ),
+                            _ActionCard(
+                              icon: Icons.badge_outlined, label: 'Ajouter un promoteur', color: AppTheme.secondary,
+                              onTap: () async {
+                                final cree = await Navigator.push(context, MaterialPageRoute(builder: (_) => const AddPromoteurScreen()));
+                                if (cree == true) _charger();
+                              },
+                            ),
+                            _ActionCard(
+                              icon: Icons.fact_check_outlined, label: 'Voir les validations', color: AppTheme.warning,
+                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ValidationsScreen())),
+                            ),
+                            _ActionCard(
+                              icon: Icons.bar_chart, label: 'Statistiques', color: AppTheme.primaryDark,
+                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StatistiquesScreen())),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
