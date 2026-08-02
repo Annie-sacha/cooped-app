@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../../core/models/client_model.dart';
 import '../../../core/api/client_service.dart';
@@ -8,6 +9,7 @@ import '../../promoteur/operations/retrait_screen.dart';
 import '../../promoteur/operations/pret_screen.dart';
 import '../../promoteur/operations/achat_screen.dart';
 import '../../promoteur/suivi/client_suivi_screen.dart';
+
 
 class ClientAdminDetailScreen extends StatefulWidget {
   final ClientModel client;
@@ -67,9 +69,10 @@ class _ClientAdminDetailScreenState extends State<ClientAdminDetailScreen> {
         if (mounted) Navigator.pop(context, true);
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Impossible de supprimer ce client (il a probablement des transactions).')),
-          );
+            final message = e is DioException && e.response?.data is Map
+                ? (e.response!.data['message'] ?? 'Erreur lors de la suppression.')
+                : 'Erreur lors de la suppression.';
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
         }
       }
     }

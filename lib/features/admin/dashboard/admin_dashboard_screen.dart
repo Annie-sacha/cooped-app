@@ -9,6 +9,7 @@ import '../../../core/theme/app_theme.dart';
 import '../clients/add_client_admin_screen.dart';
 import '../promoteurs/add_promoteur_screen.dart';
 import '../validations/validations_screen.dart';
+import '../statistiques/statistiques_screen.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -78,7 +79,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             radius: 32,
                             backgroundColor: Colors.white.withOpacity(0.2),
                             child: Text(
-                              (auth.nom?.isNotEmpty ?? false) ? auth.nom![0] : 'M',
+                              (auth.nom?.isNotEmpty ?? false) ? auth.nom![0] : 'A',
                               style: const TextStyle(fontSize: 26, color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -88,8 +89,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('Bienvenue,', style: TextStyle(color: Colors.white70)),
-                                Text('Monsieur AMADOTEY-AGBETO'
-                                  //auth.nom ?? '',
+                                Text(
+                                  auth.nom ?? '',
                                   style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -141,6 +142,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           label: 'Voir les validations',
                           color: AppTheme.warning,
                           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ValidationsScreen())),
+                        ),
+                        _ActionCard(
+                          icon: Icons.bar_chart,
+                          label: 'Statistiques',
+                          color: AppTheme.primaryDark,
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StatistiquesScreen())),
                         ),
                       ],
                     ),
