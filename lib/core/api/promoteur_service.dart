@@ -50,4 +50,8 @@ class PromoteurService {
   Future<void> delete(int id) async {
     await _apiClient.dio.delete('/promoteurs/$id');
   }
+
+  Future<void> reinitialiserMotDePasse(int id, String nouveauMotDePasse) async {
+    await _apiClient.dio.put('/promoteurs/$id/mot-de-passe', data: {'nouveauMotDePasse': nouveauMotDePasse});
+  }
 }

@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import '../../../core/models/client_model.dart';
 import '../../../core/api/client_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../promoteur/tontines/create_tontine_screen.dart';
+import '../../promoteur/tontines/client_tontines_screen.dart';
+import '../../promoteur/operations/retrait_screen.dart';
+import '../../promoteur/operations/pret_screen.dart';
+import '../../promoteur/operations/achat_screen.dart';
+import '../../promoteur/suivi/client_suivi_screen.dart';
 
 class ClientAdminDetailScreen extends StatefulWidget {
   final ClientModel client;
@@ -121,6 +127,38 @@ class _ClientAdminDetailScreenState extends State<ClientAdminDetailScreen> {
                 ),
               ),
               const Divider(height: 40),
+              const Text('Actions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 12),
+              Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => CreateTontineScreen(clientId: widget.client.id))),
+                icon: const Icon(Icons.savings), label: const Text('Nouvelle tontine'),
+                ),
+                OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ClientTontinesScreen(client: widget.client))),
+                icon: const Icon(Icons.add_card), label: const Text('Cotisation'),
+                ),
+                OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RetraitScreen(client: widget.client))),
+                icon: const Icon(Icons.money_off), label: const Text('Retrait'),
+                ),
+                OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => PretScreen(client: widget.client))),
+                icon: const Icon(Icons.handshake), label: const Text('Prêt'),
+                ),
+                OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AchatScreen(client: widget.client))),
+                icon: const Icon(Icons.shopping_bag_outlined), label: const Text('Achat'),
+                ),
+                OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ClientSuiviScreen(client: widget.client))),
+                icon: const Icon(Icons.history), label: const Text('Suivi'),
+                ),
+               ],
+              ),
               const Text('Éligibilité au prêt', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 8),
               const Text(

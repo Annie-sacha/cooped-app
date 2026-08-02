@@ -14,12 +14,15 @@ class PromoteurClientsScreen extends StatefulWidget {
 class _PromoteurClientsScreenState extends State<PromoteurClientsScreen> {
   final _service = PromoteurService();
   List<ClientModel> _clients = [];
+  List<ClientModel> _filtres = [];
   bool _loading = true;
+  final _recherche = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _charger();
+    _recherche.addListener(_filtrer);
   }
 
   Future<void> _charger() async {
@@ -27,7 +30,15 @@ class _PromoteurClientsScreenState extends State<PromoteurClientsScreen> {
     final clients = await _service.getClients(auth.utilisateurId!);
     setState(() {
       _clients = clients;
+      _filtres = clients;
       _loading = false;
+    });
+  }
+
+  void _filtrer() {
+    final q = _recherche.text.trim().toLowerCase();
+    setState(() {
+      _filtres = q.isEmpty ? _clients : _clients.where((c) => c.nomComplet.toLowerCase().contains(q)).toList();
     });
   }
 
@@ -35,25 +46,43 @@ class _PromoteurClientsScreenState extends State<PromoteurClientsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mes Clients')),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _clients.isEmpty
-              ? const Center(child: Text('Aucun client pour le moment'))
-              : ListView.builder(
-                  itemCount: _clients.length,
-                  itemBuilder: (context, i) {
-                    final c = _clients[i];
-                    return ListTile(
-                      leading: CircleAvatar(child: Text(c.initiale)),
-                      title: Text(c.nomComplet),
-                      subtitle: Text(c.telephone ?? c.quartier ?? ''),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => ClientDetailScreen(clientId: c.id)),
-                        ), // TODO : écran détail client
-                    );
-                  },
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              controller: _recherche,
+              decoration: const InputDecoration(
+                hintText: 'Rechercher un client...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _filtres.isEmpty
+                      ? const Center(child: Text('Aucun client trouvé'))
+                      : ListView.builder(
+                          itemCount: _filtres.length,
+                          itemBuilder: (context, i) {
+                            final c = _filtres[i];
+                            return ListTile(
+                              leading: CircleAvatar(child: Text(c.initiale)),
+                              title: Text(c.nomComplet),
+                              subtitle: Text(c.telephone ?? c.quartier ?? ''),
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => ClientDetailScreen(clientId: c.id)),
+                              ),
+                            );
+                          },
+                        ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

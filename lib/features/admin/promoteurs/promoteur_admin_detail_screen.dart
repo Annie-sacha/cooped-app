@@ -72,6 +72,54 @@ class _PromoteurAdminDetailScreenState extends State<PromoteurAdminDetailScreen>
     }
   }
 
+
+  Future<void> _ouvrirReinitialisationMdp() async {
+    final controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final confirme = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+        title: const Text('Réinitialiser le mot de passe'),
+        content: Form(
+            key: formKey,
+            child: TextFormField(
+            controller: controller,
+            obscureText: true,
+            decoration: const InputDecoration(labelText: 'Nouveau mot de passe'),
+            validator: (v) => (v == null || v.trim().length < 4) ? 'Minimum 4 caractères' : null,
+            ),
+        ),
+        actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
+            ElevatedButton(
+            onPressed: () {
+                if (formKey.currentState!.validate()) Navigator.pop(ctx, true);
+            },
+            child: const Text('Réinitialiser'),
+            ),
+        ],
+        ),
+    );
+
+    if (confirme == true) {
+        try {
+        await _service.reinitialiserMotDePasse(widget.promoteur.id, controller.text.trim());
+        if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Mot de passe réinitialisé avec succès'), backgroundColor: Colors.green),
+            );
+        }
+        } catch (e) {
+        if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Erreur lors de la réinitialisation.')),
+            );
+        }
+        }
+    }
+    }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,6 +147,15 @@ class _PromoteurAdminDetailScreenState extends State<PromoteurAdminDetailScreen>
                   child: _loading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text('Enregistrer'),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                    onPressed: _ouvrirReinitialisationMdp,
+                    icon: const Icon(Icons.lock_reset),
+                    label: const Text('Réinitialiser le mot de passe'),
                 ),
               ),
             ],
