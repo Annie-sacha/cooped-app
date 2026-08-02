@@ -10,6 +10,7 @@ import '../tontines/client_tontines_screen.dart';
 import '../operations/retrait_screen.dart';
 import '../operations/pret_screen.dart';
 import '../operations/achat_screen.dart';
+import '../rapports/rapports_screen.dart';
 
 class PromoteurDashboardScreen extends StatefulWidget {
   const PromoteurDashboardScreen({super.key});
@@ -150,7 +151,12 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                           }
                         },
                       ),
-                      const _ActionTile(icon: Icons.bar_chart, label: 'Rapports'),
+                      _ActionTile(
+                        icon: Icons.bar_chart,
+                        label: 'Rapports',
+                        color: AppTheme.primaryDark,
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RapportsScreen())),
+                      ),
                     ],
                   ),
                 ],

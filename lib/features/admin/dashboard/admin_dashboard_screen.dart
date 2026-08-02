@@ -79,7 +79,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             radius: 32,
                             backgroundColor: Colors.white.withOpacity(0.2),
                             child: Text(
-                              (auth.nom?.isNotEmpty ?? false) ? auth.nom![0] : 'A',
+                              (auth.nom?.isNotEmpty ?? false) ? auth.nom![0] : 'M',
                               style: const TextStyle(fontSize: 26, color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -89,8 +89,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('Bienvenue,', style: TextStyle(color: Colors.white70)),
-                                Text(
-                                  auth.nom ?? '',
+                                Text('Monsieur AMADOTEY-AGBETO'
+                                  //auth.nom ?? '',
                                   style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                               ],

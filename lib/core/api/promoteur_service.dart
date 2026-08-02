@@ -1,6 +1,7 @@
 import 'api_client.dart';
 import '../models/client_model.dart';
 import '../models/promoteur_model.dart';
+import '../models/statistique_promoteur_model.dart';
 
 class PromoteurService {
   final ApiClient _apiClient = ApiClient();
@@ -53,5 +54,10 @@ class PromoteurService {
 
   Future<void> reinitialiserMotDePasse(int id, String nouveauMotDePasse) async {
     await _apiClient.dio.put('/promoteurs/$id/mot-de-passe', data: {'nouveauMotDePasse': nouveauMotDePasse});
+  }
+
+  Future<StatistiquePromoteurModel> getStatistiques(int id) async {
+    final response = await _apiClient.dio.get('/promoteurs/$id/statistiques');
+    return StatistiquePromoteurModel.fromJson(response.data);
   }
 }
