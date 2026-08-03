@@ -1,6 +1,8 @@
 import 'api_client.dart';
 import '../models/client_model.dart';
 import '../models/penalite_result_model.dart';
+import '../models/penalite_model.dart';
+
 
 
 class ClientService {
@@ -60,6 +62,12 @@ class ClientService {
   Future<List<PenaliteResultModel>> verifierPenalites(int clientId) async {
     final response = await _apiClient.dio.get('/clients/$clientId/verifier-penalites');
     return (response.data as List).map((e) => PenaliteResultModel.fromJson(e)).toList();
+  }
+
+
+  Future<List<PenaliteModel>> getPenalites(int clientId) async {
+    final response = await _apiClient.dio.get('/clients/$clientId/penalites');
+    return (response.data as List).map((e) => PenaliteModel.fromJson(e)).toList();
   }
   
 }
