@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../core/api/client_service.dart';
 import '../../../core/models/client_model.dart';
+import '../../../core/theme/app_theme.dart';
 import '../tontines/client_tontines_screen.dart';
 import '../operations/pret_screen.dart';
 import '../operations/retrait_screen.dart';
 import '../operations/achat_screen.dart';
 import '../suivi/client_suivi_screen.dart';
-
-
+import '../../shared/client_frais_screen.dart';
 
 class ClientDetailScreen extends StatefulWidget {
   final int clientId;
@@ -24,11 +24,29 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
   void initState() {
     super.initState();
     _charger();
+    _verifierPenalites();
   }
 
   Future<void> _charger() async {
     final client = await _service.getById(widget.clientId);
     setState(() => _client = client);
+  }
+
+  Future<void> _verifierPenalites() async {
+    final penalites = await _service.verifierPenalites(widget.clientId);
+    if (penalites.isNotEmpty && mounted) {
+      for (final p in penalites) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '⚠️ Pénalité appliquée : ${p.montantPenalite?.toStringAsFixed(0)} FCFA — nouvelle échéance ${p.nouvelleEcheance}',
+            ),
+            backgroundColor: AppTheme.warning,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -44,7 +62,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           Center(
-            child: CircleAvatar(radius: 40, child: Text(c.initiale, style: const TextStyle(fontSize: 28)),),
+            child: CircleAvatar(radius: 40, child: Text(c.initiale, style: const TextStyle(fontSize: 28))),
           ),
           const SizedBox(height: 12),
           Center(child: Text(c.nomComplet, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
@@ -54,76 +72,44 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
           const Divider(),
           if (c.quartier != null) ListTile(leading: const Icon(Icons.location_on_outlined), title: Text(c.quartier!)),
           const SizedBox(height: 16),
-          Row(
+          const Text('Actions', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
             children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => ClientTontinesScreen(client: c)),
-                  ),
-                  icon: const Icon(Icons.savings_outlined),
-                  label: const Text('Tontines'),
-                ),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ClientTontinesScreen(client: c))),
+                icon: const Icon(Icons.savings_outlined),
+                label: const Text('Tontines'),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => ClientSuiviScreen(client: c)),
-                  ),
-                  icon: const Icon(Icons.history),
-                  label: const Text('Suivi'),
-                ),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ClientSuiviScreen(client: c))),
+                icon: const Icon(Icons.history),
+                label: const Text('Suivi'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RetraitScreen(client: c))),
+                icon: const Icon(Icons.money_off),
+                label: const Text('Retrait'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => PretScreen(client: c))),
+                icon: const Icon(Icons.handshake),
+                label: const Text('Prêt'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AchatScreen(client: c))),
+                icon: const Icon(Icons.shopping_bag_outlined),
+                label: const Text('Achat'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ClientFraisScreen(client: c))),
+                icon: const Icon(Icons.percent),
+                label: const Text('Frais'),
               ),
             ],
           ),
-
-
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => RetraitScreen(client: c)),
-                  ),
-                  icon: const Icon(Icons.money_off),
-                  label: const Text('Retrait'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => PretScreen(client: c)),
-                  ),
-                  icon: const Icon(Icons.handshake),
-                  label: const Text('Prêt'),
-                ),
-              ),
-            ],
-          ),
-
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                      MaterialPageRoute(builder: (_) => AchatScreen(client: c)),
-
-                  ),
-                  icon: const Icon(Icons.shopping_bag_outlined),
-                  label: const Text('Achat'),
-                 
-                ),
-              ),
-            ],
-          ),
-
         ],
       ),
     );

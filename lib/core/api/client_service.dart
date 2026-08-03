@@ -1,5 +1,7 @@
 import 'api_client.dart';
 import '../models/client_model.dart';
+import '../models/penalite_result_model.dart';
+
 
 class ClientService {
   final ApiClient _apiClient = ApiClient();
@@ -52,6 +54,12 @@ class ClientService {
 
   Future<void> definirDepotRequis(int id, double? montant) async {
     await _apiClient.dio.put('/clients/$id/depot-requis', data: {'montant': montant});
+  }
+
+
+  Future<List<PenaliteResultModel>> verifierPenalites(int clientId) async {
+    final response = await _apiClient.dio.get('/clients/$clientId/verifier-penalites');
+    return (response.data as List).map((e) => PenaliteResultModel.fromJson(e)).toList();
   }
   
 }
