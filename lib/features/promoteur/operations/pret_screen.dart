@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../core/models/client_model.dart';
 import '../../../core/models/pret_model.dart';
 import '../../../core/api/pret_service.dart';
-
+import '../../shared/widgets/solde_header.dart';
 class PretScreen extends StatefulWidget {
   final ClientModel client;
   const PretScreen({super.key, required this.client});
@@ -13,30 +13,30 @@ class PretScreen extends StatefulWidget {
 
 class _PretScreenState extends State<PretScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _mise = TextEditingController();
+  final _montantSouhaite = TextEditingController();
   final _service = PretService();
   TypePret _type = TypePret.quinzaine;
   bool _loading = false;
 
-  double get _miseValue => double.tryParse(_mise.text.trim()) ?? 0;
-  double get _coefFrais => _type == TypePret.quinzaine ? 1.0 : 1.5;
+  double get _montantValue => double.tryParse(_montantSouhaite.text.trim()) ?? 0;
   int get _coefPret => _type == TypePret.quinzaine ? 30 : 60;
+  double get _coefFrais => _type == TypePret.quinzaine ? 1.0 : 1.5;
   int get _duree => _type == TypePret.quinzaine ? 15 : 30;
 
-  double get _frais => _miseValue * _coefFrais;
-  double get _montantPrete => _miseValue * _coefPret;
+  double get _mise => _coefPret > 0 ? _montantValue / _coefPret : 0;
+  double get _frais => _mise * _coefFrais;
 
-  Future<void> _enregistrer() async {
+  Future<void> _demander() async {
     if (!_formKey.currentState!.validate()) return;
 
     final confirme = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Confirmer le prêt'),
+        title: const Text('Confirmer la demande'),
         content: Text(
-          'Mise : ${_miseValue.toStringAsFixed(0)} FCFA\n'
-          'Frais prélevés : ${_frais.toStringAsFixed(0)} FCFA\n'
-          'Montant prêté au client : ${_montantPrete.toStringAsFixed(0)} FCFA\n'
+          'Montant demandé : ${_montantValue.toStringAsFixed(0)} FCFA\n'
+          'Mise calculée : ${_mise.toStringAsFixed(0)} FCFA\n'
+          'Frais : ${_frais.toStringAsFixed(0)} FCFA\n'
           'Remboursement dans $_duree jours',
         ),
         actions: [
@@ -49,26 +49,19 @@ class _PretScreenState extends State<PretScreen> {
 
     setState(() => _loading = true);
     try {
-      final resultat = await _service.creer(
-        clientId: widget.client.id,
-        montantMise: _miseValue,
-        type: _type,
-      );
+      await _service.creer(clientId: widget.client.id, montantMise: _mise, type: _type);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Prêt accordé : ${resultat.montantPrete.toStringAsFixed(0)} FCFA'),
-            backgroundColor: Colors.green,
-          ),
+          const SnackBar(content: Text('Demande de prêt envoyée — en attente de validation admin'), backgroundColor: Colors.green),
         );
-        await Future.delayed(const Duration(milliseconds: 800));
+        await Future.delayed(const Duration(milliseconds: 900));
         if (mounted) Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
         final message = e is DioException && e.response?.data is Map
-            ? (e.response!.data['message'] ?? 'Erreur lors de la création du prêt.')
-            : 'Erreur lors de la création du prêt.';
+            ? (e.response!.data['message'] ?? 'Erreur lors de la demande.')
+            : 'Erreur lors de la demande.';
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
       }
     } finally {
@@ -79,13 +72,18 @@ class _PretScreenState extends State<PretScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Prêt — ${widget.client.nomComplet}')),
+      appBar: AppBar(title: const Text('Demande de prêt')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
+              Center(
+                child: Text(widget.client.nomComplet, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(height: 12),
+              SoldeHeader(clientId: widget.client.id),
               SegmentedButton<TypePret>(
                 segments: const [
                   ButtonSegment(value: TypePret.quinzaine, label: Text('Quinzaine')),
@@ -96,9 +94,9 @@ class _PretScreenState extends State<PretScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _mise,
+                controller: _montantSouhaite,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Montant de la mise (FCFA)', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Montant que le client veut emprunter (FCFA)', border: OutlineInputBorder()),
                 onChanged: (_) => setState(() {}),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) return 'Requis';
@@ -107,17 +105,15 @@ class _PretScreenState extends State<PretScreen> {
                 },
               ),
               const SizedBox(height: 20),
-              if (_miseValue > 0)
+              if (_montantValue > 0)
                 Card(
-                  color: Theme.of(context).colorScheme.primaryContainer,
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('Mise calculée : ${_mise.toStringAsFixed(0)} FCFA'),
                         Text('Frais : ${_frais.toStringAsFixed(0)} FCFA'),
-                        Text('Montant prêté : ${_montantPrete.toStringAsFixed(0)} FCFA',
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
                         Text('Remboursement dans $_duree jours'),
                       ],
                     ),
@@ -128,10 +124,10 @@ class _PretScreenState extends State<PretScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _loading ? null : _enregistrer,
+                  onPressed: _loading ? null : _demander,
                   child: _loading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Accorder le prêt'),
+                      : const Text('Demande de prêt'),
                 ),
               ),
             ],

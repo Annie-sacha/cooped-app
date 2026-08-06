@@ -8,6 +8,7 @@ import '../operations/retrait_screen.dart';
 import '../operations/achat_screen.dart';
 import '../suivi/client_suivi_screen.dart';
 import '../../shared/client_frais_screen.dart';
+import '../../../core/api/suivi_service.dart';
 
 class ClientDetailScreen extends StatefulWidget {
   final int clientId;
@@ -25,11 +26,19 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
     super.initState();
     _charger();
     _verifierPenalites();
+    _chargerSolde();
   }
 
   Future<void> _charger() async {
     final client = await _service.getById(widget.clientId);
     setState(() => _client = client);
+  }
+
+  double? _solde;
+
+  Future<void> _chargerSolde() async {
+    final suivi = await SuiviService().getSuivi(widget.clientId);
+    setState(() => _solde = suivi.isNotEmpty ? suivi.last.solde : 0);
   }
 
   Future<void> _verifierPenalites() async {
@@ -66,6 +75,13 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
           ),
           const SizedBox(height: 12),
           Center(child: Text(c.nomComplet, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+          const SizedBox(height: 4),
+          Center(
+            child: Text(
+              'Solde : ${_solde?.toStringAsFixed(0) ?? "..."} FCFA',
+              style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primary),
+            ),
+          ),
           if (c.telephone != null) Center(child: Text(c.telephone!)),
           const SizedBox(height: 24),
           const Text('Informations', style: TextStyle(fontWeight: FontWeight.bold)),

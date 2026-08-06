@@ -9,6 +9,7 @@ import '../../promoteur/operations/pret_screen.dart';
 import '../../promoteur/operations/achat_screen.dart';
 import '../../promoteur/suivi/client_suivi_screen.dart';
 import '../../shared/client_frais_screen.dart';
+import '../../shared/widgets/solde_header.dart';
 
 class ClientAdminDetailScreen extends StatefulWidget {
   final ClientModel client;
@@ -128,6 +129,7 @@ class _ClientAdminDetailScreenState extends State<ClientAdminDetailScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              SoldeHeader(clientId: c.id),
               const Text('Informations', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 12),
               TextField(controller: _nom, decoration: const InputDecoration(labelText: 'Nom', border: OutlineInputBorder())),

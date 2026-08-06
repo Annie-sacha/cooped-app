@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import '../../../core/models/client_model.dart';
 import '../../../core/api/achat_service.dart';
+import '../../shared/widgets/solde_header.dart';
 
 class AchatScreen extends StatefulWidget {
   final ClientModel client;
@@ -59,8 +60,9 @@ class _AchatScreenState extends State<AchatScreen> {
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
+              SoldeHeader(clientId: widget.client.id),
               TextFormField(
                 controller: _article,
                 decoration: const InputDecoration(labelText: 'Article / Désignation', border: OutlineInputBorder()),

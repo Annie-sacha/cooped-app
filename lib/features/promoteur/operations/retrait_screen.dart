@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import '../../../core/models/client_model.dart';
 import '../../../core/api/retrait_service.dart';
+import '../../shared/widgets/solde_header.dart';
 
 class RetraitScreen extends StatefulWidget {
   final ClientModel client;
@@ -28,11 +29,11 @@ class _RetraitScreenState extends State<RetraitScreen> {
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Retrait effectué avec succès'), backgroundColor: Colors.green),
+          const SnackBar(content: Text('Retrait effectué avec succès'), backgroundColor: Colors.green),
         );
         await Future.delayed(const Duration(milliseconds: 800));
         if (mounted) Navigator.pop(context, true);
-        }
+      }
     } catch (e) {
       if (mounted) {
         final message = e is DioException && e.response?.data is Map
@@ -53,8 +54,9 @@ class _RetraitScreenState extends State<RetraitScreen> {
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
+              SoldeHeader(clientId: widget.client.id),
               TextFormField(
                 controller: _montant,
                 keyboardType: TextInputType.number,

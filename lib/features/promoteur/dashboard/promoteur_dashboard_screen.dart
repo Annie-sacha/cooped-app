@@ -125,7 +125,7 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                       ),
                       _ActionTile(
                         icon: Icons.money_off,
-                        label: 'Faire un retrait',
+                        label: 'Demander un retrait',
                         color: AppTheme.danger,
                         onTap: () async {
                           final client = await _choisirClient();
@@ -139,7 +139,7 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                       ),
                       _ActionTile(
                         icon: Icons.handshake,
-                        label: 'Accorder un prêt',
+                        label: 'Demander un prêt',
                         color: AppTheme.primaryDark,
                         onTap: () async {
                           final client = await _choisirClient();

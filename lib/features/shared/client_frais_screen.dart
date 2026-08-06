@@ -5,6 +5,7 @@ import '../../core/models/penalite_model.dart';
 import '../../core/api/frais_service.dart';
 import '../../core/api/client_service.dart';
 import '../../core/theme/app_theme.dart';
+import 'widgets/solde_header.dart';
 
 class ClientFraisScreen extends StatefulWidget {
   final ClientModel client;
@@ -46,7 +47,9 @@ class _ClientFraisScreenState extends State<ClientFraisScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
+              padding: const EdgeInsets.all(16),
               children: [
+                SoldeHeader(clientId: widget.client.id),
                 Row(
                   children: [
                     Expanded(
@@ -76,11 +79,11 @@ class _ClientFraisScreenState extends State<ClientFraisScreen> {
                   ],
                 ),
                 const Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   child: Text('Frais de prêt', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
                 if (_frais.isEmpty)
-                  const Padding(padding: EdgeInsets.all(16), child: Text('Aucun frais enregistré'))
+                  const Text('Aucun frais enregistré')
                 else
                   ..._frais.map((f) => ListTile(
                         leading: const Icon(Icons.percent, color: AppTheme.warning),
@@ -89,11 +92,11 @@ class _ClientFraisScreenState extends State<ClientFraisScreen> {
                       )),
                 const Divider(),
                 const Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   child: Text('Pénalités de retard', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
                 if (_penalites.isEmpty)
-                  const Padding(padding: EdgeInsets.all(16), child: Text('Aucune pénalité appliquée'))
+                  const Text('Aucune pénalité appliquée')
                 else
                   ..._penalites.map((p) => ListTile(
                         leading: const Icon(Icons.warning_amber_rounded, color: AppTheme.danger),
