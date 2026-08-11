@@ -1,28 +1,28 @@
-class PretListModel {
+class RetraitEnAttenteModel {
   final int id;
   final int clientId;
   final String clientNom;
-  final double montant;
-  final String type;
+  final double montantTotal;
+  final String? motif;
   final String date;
   final double solde;
 
-  PretListModel({
+  RetraitEnAttenteModel({
     required this.id,
     required this.clientId,
     required this.clientNom,
-    required this.montant,
-    required this.type,
+    required this.montantTotal,
+    this.motif,
     required this.date,
     required this.solde,
   });
 
-  factory PretListModel.fromJson(Map<String, dynamic> json) => PretListModel(
+  factory RetraitEnAttenteModel.fromJson(Map<String, dynamic> json) => RetraitEnAttenteModel(
         id: json['id'],
         clientId: json['clientId'],
         clientNom: json['clientNom'],
-        montant: (json['montant'] as num).toDouble(),
-        type: json['type'],
+        montantTotal: (json['montantTotal'] as num).toDouble(),
+        motif: json['motif'],
         date: json['date'],
         solde: (json['solde'] as num).toDouble(),
       );

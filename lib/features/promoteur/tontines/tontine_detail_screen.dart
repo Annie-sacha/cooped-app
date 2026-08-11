@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import '../../../core/models/tontine_model.dart';
 import '../../../core/models/carnet_model.dart';
+import '../../../core/models/pret_info_tontine_model.dart';
 import '../../../core/api/tontine_service.dart';
-import 'package:dio/dio.dart';
+import '../../../core/api/pret_service.dart';
+import '../../../core/theme/app_theme.dart';
 
 class TontineDetailScreen extends StatefulWidget {
   final TontineModel tontine;
@@ -13,12 +16,15 @@ class TontineDetailScreen extends StatefulWidget {
 
 class _TontineDetailScreenState extends State<TontineDetailScreen> {
   final _service = TontineService();
+  final _pretService = PretService();
   CarnetModel? _carnet;
+  PretInfoTontineModel? _infoPret;
 
   @override
   void initState() {
     super.initState();
     _charger();
+    if (widget.tontine.type == 'Pret') _chargerInfoPret();
   }
 
   Future<void> _charger() async {
@@ -26,7 +32,28 @@ class _TontineDetailScreenState extends State<TontineDetailScreen> {
     setState(() => _carnet = carnet);
   }
 
+  Future<void> _chargerInfoPret() async {
+    final info = await _pretService.getInfoParTontine(widget.tontine.numero);
+    if (mounted) setState(() => _infoPret = info);
+  }
 
+  Future<void> _confirmerSuppressionCase(int cotisationId) async {
+    final confirme = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Supprimer cette cotisation ?'),
+        content: const Text('Cette action est irréversible.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Supprimer')),
+        ],
+      ),
+    );
+    if (confirme == true) {
+      await _service.supprimerCotisation(cotisationId);
+      _charger();
+    }
+  }
 
   Future<void> _ouvrirFormulaireCotisation() async {
     final miseController = TextEditingController(text: widget.tontine.mise.toStringAsFixed(0));
@@ -87,7 +114,7 @@ class _TontineDetailScreenState extends State<TontineDetailScreen> {
     if (confirme == true) {
       final mise = double.parse(miseController.text.trim());
       final nbreMise = int.parse(nbreMiseController.text.trim());
-      final montantTotal = mise * nbreMise;   // calculé automatiquement, plus d'erreur possible
+      final montantTotal = mise * nbreMise;
 
       try {
         await _service.ajouterCotisation(
@@ -107,41 +134,63 @@ class _TontineDetailScreenState extends State<TontineDetailScreen> {
     }
   }
 
-
-  Future<void> _confirmerSuppression(int cotisationId) async {
-  final confirme = await showDialog<bool>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: const Text('Supprimer cette cotisation ?'),
-      content: const Text('Cette action est irréversible.'),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
-        TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Supprimer')),
-      ],
-    ),
-  );
-  if (confirme == true) {
-    await _service.supprimerCotisation(cotisationId);
-    _charger();
-  }
-}
-
-
   @override
   Widget build(BuildContext context) {
     if (_carnet == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final c = _carnet!;
+    final casesRemplies = c.cases.where((cs) => cs.remplie).length;
+    final montantCotise = casesRemplies * c.mise;
+    final montantTotal = c.mise * c.nbreMise;
+    final montantVerse = montantTotal - c.mise;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Tontine ${c.mise.toStringAsFixed(0)} FCFA')),
+      appBar: AppBar(title: Text('Cotisation ${c.mise.toStringAsFixed(0)} FCFA')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            if (_infoPret != null) ...[
+              Card(
+                color: AppTheme.primaryDark.withOpacity(0.08),
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            _infoPret!.phase == 'Collecte' ? Icons.arrow_upward : Icons.arrow_downward,
+                            color: AppTheme.primaryDark,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            _infoPret!.phase == 'Collecte' ? 'Collecte du prêt' : 'Remboursement du prêt',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text('Type : ${_infoPret!.type}'),
+                      Text('Montant à prêter : ${_infoPret!.montantPrete.toStringAsFixed(0)} FCFA'),
+                      Text('Frais : ${_infoPret!.frais.toStringAsFixed(0)} FCFA'),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
             Text(c.cloturee ? 'Clôturée' : 'En cours', style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text('${widget.tontine.dateCreation} → ${widget.tontine.dateFin ?? "en cours"}'),
+            Text(
+              'Du ${widget.tontine.dateCreation} au ${c.cloturee ? (widget.tontine.dateFin ?? "?") : (widget.tontine.dateFinPrevue ?? "?")}',
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Montant cotisé : ${montantCotise.toStringAsFixed(0)} FCFA',
+              style: const TextStyle(color: AppTheme.secondary, fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 16),
             GridView.builder(
               shrinkWrap: true,
@@ -156,7 +205,7 @@ class _TontineDetailScreenState extends State<TontineDetailScreen> {
               itemBuilder: (context, i) {
                 final case_ = c.cases[i];
                 return GestureDetector(
-                  onTap: case_.suppressible ? () => _confirmerSuppression(case_.cotisationId!) : null,
+                  onTap: case_.suppressible ? () => _confirmerSuppressionCase(case_.cotisationId!) : null,
                   child: Container(
                     decoration: BoxDecoration(
                       color: case_.remplie ? Colors.green.shade100 : Colors.grey.shade200,
@@ -173,6 +222,33 @@ class _TontineDetailScreenState extends State<TontineDetailScreen> {
                 );
               },
             ),
+            if (c.cloturee) ...[
+              const Divider(height: 32),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Montant total'),
+                        Text('${montantTotal.toStringAsFixed(0)} FCFA', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Montant versé au client'),
+                        Text('${montantVerse.toStringAsFixed(0)} FCFA', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),

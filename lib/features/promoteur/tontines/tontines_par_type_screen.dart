@@ -100,19 +100,19 @@ class _TontinesParTypeScreenState extends State<TontinesParTypeScreen> {
           ),
         ],
       ),
-      floatingActionButton: widget.type == 'Normale'
-          ? FloatingActionButton.extended(
-              onPressed: () async {
-                final cree = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => CreateTontineScreen(clientId: widget.client.id)),
-                );
-                if (cree == true) _charger();
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Première tontine'),
-            )
-          : null,
+      floatingActionButton: (widget.type == 'Normale' && _tontines.isEmpty)
+      ? FloatingActionButton.extended(
+          onPressed: () async {
+            final cree = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => CreateTontineScreen(clientId: widget.client.id)),
+            );
+            if (cree == true) _charger();
+          },
+          icon: const Icon(Icons.add),
+          label: const Text('Nouvelle cotisation'),
+        )
+      : null,
     );
   }
 }

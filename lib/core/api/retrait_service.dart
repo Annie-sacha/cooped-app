@@ -1,5 +1,6 @@
 import 'api_client.dart';
 import '../models/retrait_model.dart';
+import '../models/retrait_en_attente_model.dart';
 
 class RetraitService {
   final ApiClient _apiClient = ApiClient();
@@ -17,13 +18,14 @@ class RetraitService {
     return (response.data as List).map((e) => RetraitModel.fromJson(e)).toList();
   }
 
-  Future<List<RetraitModel>> getEnAttente() async {
+  Future<List<RetraitEnAttenteModel>> getEnAttente() async {
     final response = await _apiClient.dio.get('/retraits/en-attente');
-    return (response.data as List).map((e) => RetraitModel.fromJson(e)).toList();
+    return (response.data as List).map((e) => RetraitEnAttenteModel.fromJson(e)).toList();
   }
 
-  Future<void> valider(int id) async => _apiClient.dio.put('/retraits/$id/valider');
-  Future<void> rejeter(int id) async => _apiClient.dio.put('/retraits/$id/rejeter');
+  Future<void> valider(int id, String motif) async =>
+      _apiClient.dio.put('/retraits/$id/valider', data: {'motif': motif});
 
-  
+  Future<void> rejeter(int id, String motif) async =>
+      _apiClient.dio.put('/retraits/$id/rejeter', data: {'motif': motif});
 }

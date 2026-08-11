@@ -29,30 +29,47 @@ class _ValidationsPretsTabState extends State<ValidationsPretsTab> {
     });
   }
 
-  Future<void> _valider(int id) async {
-    await _service.valider(id);
-    _charger();
-  }
-
-  Future<void> _rejeter(int id) async {
-    final confirme = await showDialog<bool>(
+  Future<String?> _demanderMotif(String titre) async {
+    final controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Rejeter ce prêt ?'),
-        content: const Text('La tontine et les frais associés seront supprimés.'),
+        title: Text(titre),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            maxLines: 3,
+            decoration: const InputDecoration(labelText: 'Motif', hintText: 'Justification de la décision'),
+            validator: (v) => (v == null || v.trim().isEmpty) ? 'Le motif est requis' : null,
+          ),
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Rejeter', style: TextStyle(color: AppTheme.danger)),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          ElevatedButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) Navigator.pop(ctx, controller.text.trim());
+            },
+            child: const Text('Confirmer'),
           ),
         ],
       ),
     );
-    if (confirme == true) {
-      await _service.rejeter(id);
-      _charger();
-    }
+  }
+
+  Future<void> _valider(int id) async {
+    final motif = await _demanderMotif('Valider ce prêt');
+    if (motif == null) return;
+    await _service.valider(id, motif);
+    _charger();
+  }
+
+  Future<void> _rejeter(int id) async {
+    final motif = await _demanderMotif('Rejeter ce prêt');
+    if (motif == null) return;
+    await _service.rejeter(id, motif);
+    _charger();
   }
 
   @override
@@ -68,20 +85,44 @@ class _ValidationsPretsTabState extends State<ValidationsPretsTab> {
         itemBuilder: (context, i) {
           final p = _prets[i];
           return Card(
-            child: ListTile(
-              leading: const Icon(Icons.handshake, color: AppTheme.primaryDark),
-              title: Text('${p.montant.toStringAsFixed(0)} FCFA'),
-              subtitle: Text('${p.type} — ${p.date}'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.check_circle, color: Colors.green),
-                    onPressed: () => _valider(p.id),
+                  Row(
+                    children: [
+                      const Icon(Icons.handshake, color: AppTheme.primaryDark),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(p.clientNom, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Text('Solde actuel : ${p.solde.toStringAsFixed(0)} FCFA', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.cancel, color: AppTheme.danger),
-                    onPressed: () => _rejeter(p.id),
+                  const Divider(),
+                  Text('${p.montant.toStringAsFixed(0)} FCFA', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text('${p.type} — ${p.date}'),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton.icon(
+                        onPressed: () => _rejeter(p.id),
+                        icon: const Icon(Icons.cancel, color: AppTheme.danger),
+                        label: const Text('Rejeter', style: TextStyle(color: AppTheme.danger)),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () => _valider(p.id),
+                        icon: const Icon(Icons.check_circle),
+                        label: const Text('Valider'),
+                      ),
+                    ],
                   ),
                 ],
               ),
