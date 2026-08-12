@@ -86,6 +86,24 @@ class _RapportsScreenState extends State<RapportsScreen> {
             )
           else
             const Center(child: Padding(padding: EdgeInsets.all(24), child: Text('Aucune donnée à afficher'))),
+          const SizedBox(height: 24),
+          const Text('Prêts et retraits', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _Mini(label: 'Prêts validés', value: '${s.pretsValides}', color: Colors.green)),
+              const SizedBox(width: 12),
+              Expanded(child: _Mini(label: 'Prêts refusés', value: '${s.pretsRefuses}', color: AppTheme.danger)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _Mini(label: 'Retraits validés', value: '${s.retraitsValides}', color: Colors.green)),
+              const SizedBox(width: 12),
+              Expanded(child: _Mini(label: 'Retraits refusés', value: '${s.retraitsRefuses}', color: AppTheme.danger)),
+            ],
+          ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 16,

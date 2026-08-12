@@ -22,6 +22,9 @@ class StatistiqueGlobaleModel {
   final int tontinesActives;
   final int tontinesCloturees;
   final List<StatPromoteurModel> parPromoteur;
+  final int retraitsValides;
+  final int retraitsRefuses;
+  final double fraisNormaleEtAchat;
 
   StatistiqueGlobaleModel({
     required this.totalClients,
@@ -33,6 +36,9 @@ class StatistiqueGlobaleModel {
     required this.tontinesActives,
     required this.tontinesCloturees,
     required this.parPromoteur,
+    required this.retraitsValides,
+    required this.retraitsRefuses,
+    required this.fraisNormaleEtAchat,
   });
 
   factory StatistiqueGlobaleModel.fromJson(Map<String, dynamic> json) => StatistiqueGlobaleModel(
@@ -45,5 +51,8 @@ class StatistiqueGlobaleModel {
         tontinesActives: json['tontinesActives'],
         tontinesCloturees: json['tontinesCloturees'],
         parPromoteur: (json['parPromoteur'] as List).map((e) => StatPromoteurModel.fromJson(e)).toList(),
+        retraitsValides: (json['retraitsValides']),
+        retraitsRefuses: (json['retraitsRefuses']),
+        fraisNormaleEtAchat: (json['fraisNormaleEtAchat']),
       );
 }

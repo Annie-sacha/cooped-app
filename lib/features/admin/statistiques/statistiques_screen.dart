@@ -57,6 +57,7 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                     _Carte(label: 'Total retiré', value: s.totalRetire, color: AppTheme.danger, icon: Icons.money_off),
                     _Carte(label: 'Total prêté', value: s.totalPrete, color: AppTheme.primaryDark, icon: Icons.handshake),
                     _Carte(label: 'Frais perçus', value: s.totalFraisPercus, color: AppTheme.warning, icon: Icons.percent),
+                    _Carte(label: 'Frais normale et achat', value: s.fraisNormaleEtAchat, color: AppTheme.warning, icon: Icons.percent,),
                   ],
                 );
               },
@@ -90,6 +91,13 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                 Expanded(child: _MiniStat(label: 'Clôturées', value: '${s.tontinesCloturees}', color: Colors.grey)),
               ],
             ),
+            Row(
+            children: [
+              Expanded(child: _MiniStat(label: 'Retraits validés', value: '${s.retraitsValides}', color: Colors.green)),
+              const SizedBox(width: 12),
+              Expanded(child: _MiniStat(label: 'Retraits refusés', value: '${s.retraitsRefuses}', color: AppTheme.danger)),
+            ],
+          ),
             const SizedBox(height: 28),
             const Text('Collecte par promoteur', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 12),

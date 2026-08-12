@@ -10,6 +10,7 @@ import '../../promoteur/operations/achat_screen.dart';
 import '../../promoteur/suivi/client_suivi_screen.dart';
 import '../../shared/client_frais_screen.dart';
 import '../../shared/widgets/solde_header.dart';
+import '../../../core/models/pret_en_retard_model.dart';
 
 class ClientAdminDetailScreen extends StatefulWidget {
   final ClientModel client;
@@ -24,8 +25,11 @@ class _ClientAdminDetailScreenState extends State<ClientAdminDetailScreen> {
   late final TextEditingController _telephone;
   late final TextEditingController _quartier;
   late final TextEditingController _depot;
+  PretEnRetardModel? _pretEnRetard;
+
   final _service = ClientService();
   bool _loading = false;
+  
 
   @override
   void initState() {
@@ -39,21 +43,11 @@ class _ClientAdminDetailScreenState extends State<ClientAdminDetailScreen> {
     _verifierPenalites();
   }
 
+
   Future<void> _verifierPenalites() async {
-    final penalites = await _service.verifierPenalites(widget.client.id);
-    if (penalites.isNotEmpty && mounted) {
-      for (final p in penalites) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '⚠️ Pénalité appliquée : ${p.montantPenalite?.toStringAsFixed(0)} FCFA — nouvelle échéance ${p.nouvelleEcheance}',
-            ),
-            backgroundColor: AppTheme.warning,
-            duration: const Duration(seconds: 5),
-          ),
-        );
-      }
-    }
+    await _service.verifierPenalites(widget.client.id);
+    final retard = await _service.getPretEnRetard(widget.client.id);
+    if (mounted) setState(() => _pretEnRetard = retard);
   }
 
   Future<void> _enregistrerInfos() async {
@@ -129,6 +123,17 @@ class _ClientAdminDetailScreenState extends State<ClientAdminDetailScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              if (_pretEnRetard != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(color: AppTheme.warning, borderRadius: BorderRadius.circular(10)),
+                child: Text(
+                  '⚠️ Prêt en retard : ${_pretEnRetard!.montant.toStringAsFixed(0)} FCFA — échéance ${_pretEnRetard!.dateEcheance}. Une pénalité a été appliquée.',
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
               SoldeHeader(clientId: c.id),
               const Text('Informations', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 12),

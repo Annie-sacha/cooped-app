@@ -9,6 +9,9 @@ import '../operations/achat_screen.dart';
 import '../suivi/client_suivi_screen.dart';
 import '../../shared/client_frais_screen.dart';
 import '../../../core/api/suivi_service.dart';
+import '../../../core/models/pret_en_retard_model.dart';
+
+
 
 class ClientDetailScreen extends StatefulWidget {
   final int clientId;
@@ -20,6 +23,8 @@ class ClientDetailScreen extends StatefulWidget {
 class _ClientDetailScreenState extends State<ClientDetailScreen> {
   final _service = ClientService();
   ClientModel? _client;
+  PretEnRetardModel? _pretEnRetard;
+
 
   @override
   void initState() {
@@ -41,21 +46,11 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
     setState(() => _solde = suivi.isNotEmpty ? suivi.last.solde : 0);
   }
 
+
   Future<void> _verifierPenalites() async {
-    final penalites = await _service.verifierPenalites(widget.clientId);
-    if (penalites.isNotEmpty && mounted) {
-      for (final p in penalites) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '⚠️ Pénalité appliquée : ${p.montantPenalite?.toStringAsFixed(0)} FCFA — nouvelle échéance ${p.nouvelleEcheance}',
-            ),
-            backgroundColor: AppTheme.warning,
-            duration: const Duration(seconds: 5),
-          ),
-        );
-      }
-    }
+    await _service.verifierPenalites(widget.clientId);
+    final retard = await _service.getPretEnRetard(widget.clientId);
+    if (mounted) setState(() => _pretEnRetard = retard);
   }
 
   @override
@@ -70,6 +65,17 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          if (_pretEnRetard != null)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(color: AppTheme.warning, borderRadius: BorderRadius.circular(10)),
+            child: Text(
+              '⚠️ Prêt en retard : ${_pretEnRetard!.montant.toStringAsFixed(0)} FCFA — échéance ${_pretEnRetard!.dateEcheance}. Une pénalité a été appliquée.',
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
           Center(
             child: CircleAvatar(radius: 40, child: Text(c.initiale, style: const TextStyle(fontSize: 28))),
           ),

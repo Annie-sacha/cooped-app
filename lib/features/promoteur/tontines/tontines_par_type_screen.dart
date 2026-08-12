@@ -104,7 +104,7 @@ class _TontinesParTypeScreenState extends State<TontinesParTypeScreen> {
           ),
         ],
       ),
-      floatingActionButton: (widget.type == 'Normale' && _tontines.isEmpty)
+      floatingActionButton: (widget.type == 'Normale' && !_tontines.any((t) => t.estActive))
       ? FloatingActionButton.extended(
           onPressed: () async {
             final cree = await Navigator.push(

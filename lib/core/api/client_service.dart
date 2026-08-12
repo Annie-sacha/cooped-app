@@ -2,6 +2,7 @@ import 'api_client.dart';
 import '../models/client_model.dart';
 import '../models/penalite_result_model.dart';
 import '../models/penalite_model.dart';
+import '../models/pret_en_retard_model.dart';
 
 
 
@@ -68,6 +69,12 @@ class ClientService {
   Future<List<PenaliteModel>> getPenalites(int clientId) async {
     final response = await _apiClient.dio.get('/clients/$clientId/penalites');
     return (response.data as List).map((e) => PenaliteModel.fromJson(e)).toList();
+  }
+
+
+  Future<PretEnRetardModel?> getPretEnRetard(int clientId) async {
+    final response = await _apiClient.dio.get('/clients/$clientId/pret-en-retard');
+    return response.data == null ? null : PretEnRetardModel.fromJson(response.data);
   }
   
 }
