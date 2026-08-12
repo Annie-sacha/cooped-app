@@ -1,92 +1,82 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/client_model.dart';
-import '../../../core/models/ligne_suivi_model.dart';
-import '../../../core/api/suivi_service.dart';
 import '../../../core/theme/app_theme.dart';
+import 'suivi_normal_screen.dart';
+import 'suivi_achat_screen.dart';
+import 'suivi_pret_screen.dart';
 
-class ClientSuiviScreen extends StatefulWidget {
+class ClientSuiviScreen extends StatelessWidget {
   final ClientModel client;
   const ClientSuiviScreen({super.key, required this.client});
-  @override
-  State<ClientSuiviScreen> createState() => _ClientSuiviScreenState();
-}
-
-class _ClientSuiviScreenState extends State<ClientSuiviScreen> {
-  final _service = SuiviService();
-  List<LigneSuiviModel> _lignes = [];
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _charger();
-  }
-
-  Future<void> _charger() async {
-    setState(() => _loading = true);
-    final lignes = await _service.getSuivi(widget.client.id);
-    setState(() {
-      _lignes = lignes;
-      _loading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    final soldeActuel = _lignes.isNotEmpty ? _lignes.last.solde : 0.0;
-
     return Scaffold(
-      appBar: AppBar(title: Text('Suivi — ${widget.client.nomComplet}')),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _charger,
-              child: Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    child: Column(
-                      children: [
-                        const Text('Solde actuel'),
-                        Text(
-                          '${soldeActuel.toStringAsFixed(0)} FCFA',
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: _lignes.isEmpty
-                        ? const Center(child: Text('Aucune opération enregistrée'))
-                        : SingleChildScrollView(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: DataTable(
-                                columns: const [
-                                  DataColumn(label: Text('Date')),
-                                  DataColumn(label: Text('Désignation')),
-                                  DataColumn(label: Text('Sortie'), numeric: true),
-                                  DataColumn(label: Text('Entrée'), numeric: true),
-                                  DataColumn(label: Text('Solde'), numeric: true),
-                                ],
-                                rows: _lignes.map((l) => DataRow(cells: [
-                                  DataCell(Text(l.date)),
-                                  DataCell(Text(l.designation)),
-                                  DataCell(Text(l.sortie > 0 ? l.sortie.toStringAsFixed(0) : '-',
-                                      style: const TextStyle(color: AppTheme.danger))),
-                                  DataCell(Text(l.entree > 0 ? l.entree.toStringAsFixed(0) : '-',
-                                      style: const TextStyle(color: AppTheme.secondary))),
-                                  DataCell(Text(l.solde.toStringAsFixed(0), style: const TextStyle(fontWeight: FontWeight.bold))),
-                                ])).toList(),
-                              ),
-                            ),
-                          ),
-                  ),
-                ],
-              ),
+      appBar: AppBar(title: Text('Suivi — ${client.nomComplet}')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _Categorie(
+              label: 'Suivi Normal',
+              icon: Icons.savings_outlined,
+              color: AppTheme.secondary,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SuiviNormalScreen(client: client))),
             ),
+            const SizedBox(height: 16),
+            _Categorie(
+              label: 'Suivi Prêt',
+              icon: Icons.handshake,
+              color: AppTheme.primaryDark,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SuiviPretScreen(client: client))),
+            ),
+            const SizedBox(height: 16),
+            _Categorie(
+              label: 'Suivi Achat',
+              icon: Icons.shopping_bag_outlined,
+              color: AppTheme.warning,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SuiviAchatScreen(client: client))),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Categorie extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  const _Categorie({required this.label, required this.icon, required this.color, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 3))],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: color.withOpacity(0.12), shape: BoxShape.circle),
+              child: Icon(icon, color: color),
+            ),
+            const SizedBox(width: 16),
+            Expanded(child: Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+            const Icon(Icons.chevron_right, color: Colors.grey),
+          ],
+        ),
+      ),
     );
   }
 }

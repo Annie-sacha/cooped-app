@@ -27,4 +27,13 @@ class AchatService {
     final response = await _apiClient.dio.get('/achats/client/$clientId');
     return (response.data as List).map((e) => AchatModel.fromJson(e)).toList();
   }
+
+
+  Future<void> creerCotisation({required int clientId, required String article, required double montant}) async {
+    await _apiClient.dio.post('/achats/cotisation', data: {
+      'clientId': clientId,
+      'article': article,
+      'montant': montant,
+    });
+  }
 }

@@ -6,6 +6,7 @@ class TontineModel {
   final String? dateFin;
   final String? dateFinPrevue;
   final String type;   // "Normale", "Pret", "Achat"
+  final String? article;
 
 
   TontineModel({
@@ -16,6 +17,7 @@ class TontineModel {
     this.dateFin,
     this.dateFinPrevue,
     required this.type,
+    this.article,
   });
 
   
@@ -30,7 +32,7 @@ class TontineModel {
         dateFin: json['dateFin'],
         dateFinPrevue: json['dateFinPrevue'],
         type: json['type'],
-
+        article: json['article'],
       );
 
   bool get estActive => dateFin == null;

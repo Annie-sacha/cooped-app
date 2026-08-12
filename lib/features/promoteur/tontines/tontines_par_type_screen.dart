@@ -89,7 +89,11 @@ class _TontinesParTypeScreenState extends State<TontinesParTypeScreen> {
                         itemBuilder: (context, i) {
                           final t = _tontines[i];
                           return ListTile(
-                            title: Text('${t.mise.toStringAsFixed(0)} FCFA / cotisation'),
+                            title: Text(
+                              t.type == 'Achat' && t.article != null
+                                  ? '${t.article} — ${t.mise.toStringAsFixed(0)} FCFA'
+                                  : '${t.mise.toStringAsFixed(0)} FCFA / cotisation',
+                            ),
                             subtitle: Text('${t.nbreMise} cases — ${t.estActive ? "En cours" : "Clôturée"}\n${t.periode}'),
                             trailing: Icon(Icons.circle, color: t.estActive ? Colors.green : Colors.grey, size: 12),
                             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TontineDetailScreen(tontine: t))),

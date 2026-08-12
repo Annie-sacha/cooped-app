@@ -75,11 +75,12 @@ class _PromoteurDashboardScreenState extends State<PromoteurDashboardScreen> {
                   const Text('Actions rapides', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 12),
                   GridView.count(
-                    crossAxisCount: 3,
+                    crossAxisCount: 2,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 14,
+                    crossAxisSpacing: 14,
+                    childAspectRatio: 1.15,
                     children: [
                       _ActionTile(
                         icon: Icons.savings,
@@ -178,7 +179,69 @@ class _StatBox extends StatelessWidget {
       );
 }
 
+
 class _ActionTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onTap;
+
+  const _ActionTile({
+    required this.icon,
+    required this.label,
+    this.color = AppTheme.primary,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 1,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 12,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  size: 24,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+/*class _ActionTile extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
@@ -214,3 +277,66 @@ class _ActionTile extends StatelessWidget {
         ),
       );
 }
+
+
+
+class _ActionTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onTap;
+
+  const _ActionTile({
+    required this.icon,
+    required this.label,
+    this.color = AppTheme.primary,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 6,
+            vertical: 8,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Flexible(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}*/
