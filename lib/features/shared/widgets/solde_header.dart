@@ -19,8 +19,8 @@ class _SoldeHeaderState extends State<SoldeHeader> {
   }
 
   Future<void> _charger() async {
-    final suivi = await SuiviService().getSuivi(widget.clientId);
-    if (mounted) setState(() => _solde = suivi.isNotEmpty ? suivi.last.solde : 0);
+    final solde = await SuiviService().getSoldeGlobal(widget.clientId);
+    if (mounted) setState(() => _solde = solde);
   }
 
   @override

@@ -141,9 +141,8 @@ class _TontineDetailScreenState extends State<TontineDetailScreen> {
     }
     final c = _carnet!;
     final casesRemplies = c.cases.where((cs) => cs.remplie).length;
-    final montantCotise = casesRemplies * c.mise;
-    final montantTotal = c.mise * c.nbreMise;
-    final montantVerse = montantTotal - c.mise;
+    final montantTotal = casesRemplies * c.mise;
+    final montantVerse = montantTotal > c.mise ? montantTotal - c.mise : 0;
 
     return Scaffold(
       appBar: AppBar(title: Text('Cotisation ${c.mise.toStringAsFixed(0)} FCFA')),
@@ -186,11 +185,6 @@ class _TontineDetailScreenState extends State<TontineDetailScreen> {
             Text(
               'Du ${widget.tontine.dateCreation} au ${c.cloturee ? (widget.tontine.dateFin ?? "?") : (widget.tontine.dateFinPrevue ?? "?")}',
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Montant cotisé : ${montantCotise.toStringAsFixed(0)} FCFA',
-              style: const TextStyle(color: AppTheme.secondary, fontWeight: FontWeight.w600),
-            ),
             const SizedBox(height: 16),
             GridView.builder(
               shrinkWrap: true,
@@ -222,33 +216,31 @@ class _TontineDetailScreenState extends State<TontineDetailScreen> {
                 );
               },
             ),
-            if (c.cloturee) ...[
-              const Divider(height: 32),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Montant total'),
-                        Text('${montantTotal.toStringAsFixed(0)} FCFA', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Montant versé au client'),
-                        Text('${montantVerse.toStringAsFixed(0)} FCFA', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ],
-                ),
+            const Divider(height: 32),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Montant total'),
+                      Text('${montantTotal.toStringAsFixed(0)} FCFA', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Montant versé au client'),
+                      Text('${montantVerse.toStringAsFixed(0)} FCFA', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ],
               ),
-            ],
+            ),
           ],
         ),
       ),

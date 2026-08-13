@@ -20,6 +20,10 @@ class SuiviService {
     final response = await _apiClient.dio.get('/clients/$clientId/suivi-pret');
     return (response.data as List).map((e) => LignePretSuiviModel.fromJson(e)).toList();
   }
+  Future<double> getSoldeGlobal(int clientId) async {
+    final response = await _apiClient.dio.get('/clients/$clientId/solde-global');
+    return (response.data['solde'] as num).toDouble();
+  }
 }
 
 
